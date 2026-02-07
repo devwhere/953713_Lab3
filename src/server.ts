@@ -1,5 +1,6 @@
 import express from "express";
 import type { Request, Response } from "express";
+import { get } from "node:http";
 
 const app = express();
 const port = 3000;
@@ -110,14 +111,18 @@ app.listen(port, () => {
 });
 
 app.get("/events", (req, res) => {
-  const category = req.query.category;
-  const filterdEvents = events.filter((event) => event.category === category);
-  res.send(filterdEvents);
+  if (req.query.category) {
+    const category = req.query.category as string;
+    const filteredEvents = getEventByCategory(category);
+    res.json(filteredEvents);
+  } else {
+    res.json(getAllEvents());
+  }
 });
 
 app.get("/events/:id", (req, res) => {
   const id = parseInt(req.params.id);
-  const event = events.find((event) => event.id === id);
+  const event = getEventById(id);
   if (event) {
     res.json(event);
   } else {
@@ -127,7 +132,27 @@ app.get("/events/:id", (req, res) => {
 
 app.post("/events", (req, res) => {
   const newEvent: Event = req.body;
-  newEvent.id = events.length + 1;
-  events.push(newEvent);
+  addEvent(newEvent);
   res.json(newEvent);
 });
+
+function getEventByCategory(category: string): Event[] {
+  const FilgeredEvents = events.filter(
+    (events) => events.category === category,
+  );
+  return FilgeredEvents;
+}
+
+function getAllEvents(): Event[] {
+  return events;
+}
+
+function getEventById(id: number): Event | undefined {
+  return events.find((event) => event.id === id);
+}
+
+function addEvent(newEvent: Event): Event {
+  newEvent.id = events.length + 1;
+  events.push(newEvent);
+  return newEvent;
+}
