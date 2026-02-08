@@ -1,29 +1,30 @@
-import pg from "pg";
+// import pg from "pg";
+import * as db from "../db";
 import type Event from "../models/Event";
-const { Pool } = pg;
+// const { Pool } = pg;
 
-const pool = new Pool({
-  user: "admin",
-  password: "admin123",
-  host: "localhost",
-  port: 5432,
-  database: "mydatabase",
-});
+// const pool = new Pool({
+//   user: "admin",
+//   password: "admin123",
+//   host: "localhost",
+//   port: 5432,
+//   database: "mydatabase",
+// });
 
 export async function getEventByCategory(category: string): Promise<Event[]> {
-  const result = await pool.query("SELECT * FROM events WHERE category = $1", [
+  const result = await db.query("SELECT * FROM events WHERE category = $1", [
     category,
   ]);
   return result.rows as Event[];
 }
 
 export async function getAllEvents(): Promise<Event[]> {
-  const result = await pool.query("SELECT * FROM events");
+  const result = await db.query("SELECT * FROM events");
   return result.rows as Event[];
 }
 
 export async function getEventById(id: number): Promise<Event | undefined> {
-  const result = await pool.query("SELECT * FROM events WHERE id = $1", [id]);
+  const result = await db.query("SELECT * FROM events WHERE id = $1", [id]);
   const events = result.rows as Event[];
   return events.length > 0 ? events[0] : undefined;
 }
@@ -39,7 +40,7 @@ export async function addEvent(newEvent: Event): Promise<Event> {
     petsAllowed,
     organizer,
   } = newEvent;
-  const result = await pool.query(
+  const result = await db.query(
     "INSERT INTO events (category, title, description, location, date, time, pets_allowed, organizer) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
     [
       category,
