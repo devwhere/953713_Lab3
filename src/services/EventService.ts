@@ -1,23 +1,18 @@
 import type Event from "../models/Event";
-import {
-  getAllEvents as allEvents,
-  getEventByCategory as eventByCategory,
-  getEventById as eventById,
-  addEvent as addNewEvent,
-} from "../repositories/EventRepository";
+import * as repo from "../repositories/EventRepository";
 
 export function getEventByCategory(category: string): Promise<Event[]> {
-  return eventByCategory(category);
+  return repo.getEventByCategory(category);
 }
 
 export function getAllEvents(): Promise<Event[]> {
-  return allEvents();
+  return repo.getAllEvents();
 }
 
 export function getEventById(id: number): Promise<Event | undefined> {
-  return eventById(id);
+  return repo.getEventById(id);
 }
 
 export function addEvent(newEvent: Event): Promise<Event> {
-  return addNewEvent(newEvent);
+  return repo.addEvent(newEvent);
 }
